@@ -63,6 +63,7 @@ require('dotenv').config();
 const mysql = require('mysql2');
 
 // Create connection pool (better for production)
+
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -70,9 +71,13 @@ const db = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  connectionLimit: 2,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
+
+
 
 // Test connection
 db.getConnection((err, connection) => {
