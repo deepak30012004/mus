@@ -272,9 +272,15 @@ app.post('/api/register', async (req, res) => {
       if (err) return res.status(500).json({ error: err.message });
 
       // Generate a JWT token for the user
-      const token = jwt.sign({ email, type: 'user' }, JWT_SECRET, { expiresIn: '7d' });
+     res.status(201).json({
+      token,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        is_paid: newUser.is_paid,  // Send the 'is_paid' status to the frontend
+      }
+    });
 
-      res.status(201).json({ token });
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -546,8 +552,15 @@ app.post('/api/login', async (req, res) => {
     if (!user || !user.passwordHash) return res.status(401).json({ error: 'no such user or password not set' });
     const ok = bcrypt.compareSync(password, user.passwordHash);
     if (!ok) return res.status(401).json({ error: 'invalid credentials' });
-    const token = jwt.sign({ email, type: 'user' }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token });
+  const token = jwt.sign({ email, type: 'user' }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        is_paid: user.is_paid,  // Send the 'is_paid' status to the frontend
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
