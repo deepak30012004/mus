@@ -34,7 +34,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:4000',
+        url: 'https://mus-hse9.onrender.com',
         description: 'Development server'
       }
     ],
@@ -154,7 +154,7 @@ async function downloadImageTo(url, destPath) {
 
 const UPLOADS = path.join(__dirname, 'uploads');
 const PORT = process.env.PORT || 4000;
-const JWT_SECRET = 'dev_secret_replace_me';
+const JWT_SECRET = 'xyz';
 const ADMIN_SECRET = 'admin_secret_demo';
 
 const upload = multer({ dest: UPLOADS });
