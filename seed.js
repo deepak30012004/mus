@@ -34,7 +34,7 @@ sampleFiles.forEach(async (f) => {
     // placeholder file for demo
     fs.writeFileSync(p, `Placeholder audio file: ${f.title}`);
   }
-  db.get('SELECT id, cover_url FROM songs WHERE filename = ?', [f.filename], async (err, row) => {
+  db.query('SELECT id, cover_url FROM songs WHERE filename = ?', [f.filename], async (err, row) => {
     if (err) return console.error(err);
     const remote = getRandomImageForCategory(f.category);
     // attempt to download a local copy
