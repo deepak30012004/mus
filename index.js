@@ -204,6 +204,119 @@ function setUserPassword(email, passwordHash) {
   });
 }
 
+
+
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Create a new user account with email and password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: User registered successfully, returns JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Missing fields
+ *       409:
+ *         description: User already exists
+ *       500:
+ *         description: Server error
+ */
+
+/* Register a new user */
+app.post('/api/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  // Check if user already exists
+  try {
+    const user = await findUserByEmail(email);
+    if (user) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    // Hash the password
+    const salt = bcrypt.genSaltSync(8);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    // Create the user in the database
+    db.query('INSERT INTO users (email, passwordHash) VALUES (?, ?)', [email, hashedPassword], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+
+      // Generate a JWT token for the user
+      const token = jwt.sign({ email, type: 'user' }, JWT_SECRET, { expiresIn: '7d' });
+
+      res.status(201).json({ token });
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * @swagger
  * /api/songs:
